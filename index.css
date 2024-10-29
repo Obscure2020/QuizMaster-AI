@@ -15,3 +15,17 @@ header {
     padding: 30px 10%;
     background-color: #5c5470;
 }
+
+.logo {
+    cursor: pointer;
+}
+
+.logo p {
+    font-weight: bold;
+    font-size: 24px;
+    color: white;
+    text-decoration: none;
+    background-color: none;
+    font-family: sans-serif;
+    margin-bottom: 10px;
+}
