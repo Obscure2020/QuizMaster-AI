@@ -46,3 +46,12 @@ header {
     width: 80%;
     max-width: 600px;
 }
+
+.textarea {
+    width: 100%;
+    padding: 100px;
+    background-color: #5c5470;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+}
