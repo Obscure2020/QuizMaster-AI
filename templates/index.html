@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="static\index.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <p>QuizMasterAI</p>
+        </div>
+        <nav>
+            <ul></ul>
+        </nav>
+    </header>
+    <div class="container">
+        <form method="POST" action="/">
+            <div class="content">
+                <textarea placeholder="Place your text here" name="student_text" rows="10" cols="50"></textarea>
+                <button class="btn" type="submit">Generate Flashcards</button>
+            </div>
+        </form>
+        <!-- Display the response -->
+        {% if submitted_text %}
+        <div class="output">
+            <h2>Processed Text:</h2>
+            <p>{{ submitted_text }}</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
