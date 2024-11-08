@@ -1,14 +1,22 @@
-# This line imports the Flask class and the jsonify function from the Flask library
-from flask import Flask, jsonify
-#This line creates an instance of the Flask application
+# Import necessary modules
+from flask import Flask, render_template, request
+
+# Initialize Flask app
 app = Flask(__name__)
 
-# This route responds to the root URL (/) and returns a JSON message with the text "Welcome to the Flask backend!"
-@app.route('/')
-
-# This function is called when the root URL is accessed, responsible for handling the request and generating a response.
+@app.route('/', methods=['GET', 'POST'])
 def home():
-    return jsonify(message="Welcome to the Flask backend!")
+    # Initialize variable for submitted text
+    submitted_text = ""
+    if request.method == 'POST':
+        # Get the text input from the form
+        submitted_text = request.form.get('student_text', '')
+        print("Received input:", submitted_text)  # Debugging log
+        # Perform any processing (generating flashcards)
+    
+    # Render the template with submitted text
+    return render_template('index.html', submitted_text=submitted_text)
 
 if __name__ == '__main__':
+    # Run the Flask application
     app.run(debug=True)
