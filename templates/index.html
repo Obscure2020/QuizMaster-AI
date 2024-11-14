@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizMasterAI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Arsenal+SC:ital,wght@0,400;0,700;1,400;1,700&family=Geist+Mono:wght@100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <p>QuizMaster.AI</p>
+    </nav>
+    <div class="content">
+        <form id="flashcard-form" action="/generate_flashcards" method="POST">
+            <textarea id="text" name="text" placeholder="Transform your text into smart flashcards with our AI"></textarea>
+            <button type="submit">Generate Flashcards</button>
+        </form>
+    </div>
+
+    <!-- Flashcards container to display generated flashcards -->
+    <div id="flashcards-container"></div>
+
+    <!-- Loading message (initially hidden) -->
+    <div id="loading" style="display: none;">Loading, please wait...</div>
+</body>
+</html>
+
+<script>
+    document.querySelector("#flashcard-form").addEventListener("submit", async function(event) {
+        event.preventDefault();
+        const inputText = document.getElementById("text").value;
+
+        // Show the loading message
+        document.getElementById("loading").style.display = "block";
+
+        // Clear any previous flashcards
+        document.getElementById("flashcards-container").innerHTML = "";
+
+        try {
+            const response = await fetch("/generate_flashcards", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ text: inputText })
+            });
+
+            const data = await response.json();
+            console.log("API response:", data);  // Log API response to check data
+            displayFlashcards(data.flashcards);
+        } catch (error) {
+            console.error("Error:", error);
+        } finally {
+            // Hide the loading message after the response is received
+            document.getElementById("loading").style.display = "none";
+        }
+    });
+
+    function displayFlashcards(flashcards) {
+        const flashcardsContainer = document.getElementById("flashcards-container");
+        flashcardsContainer.innerHTML = ""; // Clear previous flashcards
+
+        flashcards.forEach(card => {
+            const flashcard = document.createElement("div");
+            flashcard.classList.add("flashcard");
+
+            // Create a wrapper for the border and shadow
+            const cardInner = document.createElement("div");
+            cardInner.classList.add("card-inner");
+
+            // Front side with question
+            const front = document.createElement("div");
+            front.classList.add("front");
+            front.innerHTML = `<strong>Q:</strong> ${card.question}`;
+
+            // Back side with answer
+            const back = document.createElement("div");
+            back.classList.add("back");
+            back.innerHTML = `<strong>A:</strong> ${card.answer}`;
+
+            // Append front and back to the card-inner wrapper
+            cardInner.appendChild(front);
+            cardInner.appendChild(back);
+            flashcard.appendChild(cardInner);
+
+            // Toggle flip class on click
+            flashcard.addEventListener("click", () => {
+                flashcard.classList.toggle("flipped");
+            });
+
+            flashcardsContainer.appendChild(flashcard);
+        });
+    }
+
+
+</script>
