@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, jsonify
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
-load_dotenv()
+load_dotenv("static\.env")
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app = Flask(__name__)
