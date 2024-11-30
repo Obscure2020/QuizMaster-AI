@@ -21,6 +21,7 @@ main {
 textarea {
     width: 400px;
     height: 150px;
+    max-width: 90vw;
     margin-bottom: 1rem;
 }
 
@@ -35,6 +36,10 @@ button {
 
 button:hover {
     background: #4d2950;
+}
+
+#flashcard-form {
+    text-align: center;
 }
 
 #flashcards-container {
