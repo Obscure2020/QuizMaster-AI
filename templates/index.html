@@ -1,10 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <title>QuizMasterAI</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QuizMasterAI</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+    <script>
+        card_inners = [];
+        card_fronts = [];
+        card_backs = [];
+
+        function displayFlashcards(flashcards) {
+            const flashcardsContainer = document.querySelector("#flashcards-container");
+            flashcardsContainer.innerHTML = ""; // Clear previous content
+            card_inners = [];
+            card_fronts = [];
+            card_backs = [];
+            if (flashcards.length === 0) {
+                flashcardsContainer.innerHTML = "<p>No flashcards generated.</p>";
+                return;
+            }
+            flashcards.forEach(({ question, answer }) => {
+                const front = document.createElement("div");
+                front.classList.add("front");
+                front.innerHTML = `<strong>Q:</strong> ${question}`;
+                card_fronts.push(front);
+
+                const back = document.createElement("div");
+                back.classList.add("back");
+                back.innerHTML = `<strong>A:</strong> ${answer}`;
+                card_backs.push(back);
+
+                const card_inner = document.createElement("div");
+                card_inner.classList.add("card-inner");
+                card_inner.appendChild(front);
+                card_inner.appendChild(back);
+                card_inners.push(card_inner);
+
+                const card = document.createElement("div");
+                card.classList.add("flashcard");
+                card.appendChild(card_inner);
+                card.addEventListener("click", () => card.classList.toggle("flipped"));
+
+                flashcardsContainer.appendChild(card);
+            });
+            repairCardDimensions();
+        }
+
+        function repairCardDimensions() {
+            card_inners.forEach((inner, index) => {
+                const front = card_fronts[index];
+                const back = card_backs[index];
+                inner.style.removeProperty("height");
+                front.style.removeProperty("height");
+                back.style.removeProperty("height");
+                const front_outer_height = front.getBoundingClientRect().height;
+                const back_outer_height = back.getBoundingClientRect().height;
+                const outer_height_css = Math.max(front_outer_height, back_outer_height) + "px";
+                inner.style.setProperty("height", outer_height_css);
+                const front_inner_height = parseFloat(window.getComputedStyle(front).height);
+                const back_inner_height = parseFloat(window.getComputedStyle(back).height);
+                const inner_height_css = Math.max(front_inner_height, back_inner_height) + "px";
+                front.style.setProperty("height", inner_height_css);
+                back.style.setProperty("height", inner_height_css);
+            });
+        }
+
+        window.onresize = repairCardDimensions;
+    </script>
 </head>
 <body>
     <header>
@@ -58,30 +121,6 @@
                 loadingIndicator.style.display = "none";
             }
         });
-
-        // Render flashcards
-        function displayFlashcards(flashcards) {
-            const flashcardsContainer = document.querySelector("#flashcards-container");
-            flashcardsContainer.innerHTML = ""; // Clear previous content
-
-            if (flashcards.length === 0) {
-                flashcardsContainer.innerHTML = "<p>No flashcards generated.</p>";
-                return;
-            }
-
-            flashcards.forEach(({ question, answer }) => {
-                const card = document.createElement("div");
-                card.classList.add("flashcard");
-                card.innerHTML = `
-                    <div class="card-inner">
-                        <div class="front"><strong>Q:</strong> ${question}</div>
-                        <div class="back"><strong>A:</strong> ${answer}</div>
-                    </div>
-                `;
-                card.addEventListener("click", () => card.classList.toggle("flipped"));
-                flashcardsContainer.appendChild(card);
-            });
-        }
     </script>
 </body>
 </html>
