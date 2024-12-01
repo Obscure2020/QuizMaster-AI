@@ -1,34 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <title>QuizMasterAI</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-    <link rel="stylesheet" href="static\index.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+    <script>
+        card_inners = [];
+        card_fronts = [];
+        card_backs = [];
+
+        function displayFlashcards(flashcards) {
+            const flashcardsContainer = document.querySelector("#flashcards-container");
+            flashcardsContainer.innerHTML = ""; // Clear previous content
+            card_inners = [];
+            card_fronts = [];
+            card_backs = [];
+            if (flashcards.length === 0) {
+                flashcardsContainer.innerHTML = "<p>No flashcards generated.</p>";
+                return;
+            }
+            flashcards.forEach(({ question, answer }) => {
+                const front = document.createElement("div");
+                front.classList.add("front");
+                front.innerHTML = `<strong>Q:</strong> ${question}`;
+                card_fronts.push(front);
+
+                const back = document.createElement("div");
+                back.classList.add("back");
+                back.innerHTML = `<strong>A:</strong> ${answer}`;
+                card_backs.push(back);
+
+                const card_inner = document.createElement("div");
+                card_inner.classList.add("card-inner");
+                card_inner.appendChild(front);
+                card_inner.appendChild(back);
+                card_inners.push(card_inner);
+
+                const card = document.createElement("div");
+                card.classList.add("flashcard");
+                card.appendChild(card_inner);
+                card.addEventListener("click", () => card.classList.toggle("flipped"));
+
+                flashcardsContainer.appendChild(card);
+            });
+            repairCardDimensions();
+        }
+
+        function repairCardDimensions() {
+            card_inners.forEach((inner, index) => {
+                const front = card_fronts[index];
+                const back = card_backs[index];
+                inner.style.removeProperty("height");
+                front.style.removeProperty("height");
+                back.style.removeProperty("height");
+                const front_outer_height = front.getBoundingClientRect().height;
+                const back_outer_height = back.getBoundingClientRect().height;
+                const outer_height_css = Math.max(front_outer_height, back_outer_height) + "px";
+                inner.style.setProperty("height", outer_height_css);
+                const front_inner_height = parseFloat(window.getComputedStyle(front).height);
+                const back_inner_height = parseFloat(window.getComputedStyle(back).height);
+                const inner_height_css = Math.max(front_inner_height, back_inner_height) + "px";
+                front.style.setProperty("height", inner_height_css);
+                back.style.setProperty("height", inner_height_css);
+            });
+        }
+
+        window.onresize = repairCardDimensions;
+    </script>
 </head>
 <body>
     <header>
-        <div class="logo">
-            <p>QuizMasterAI</p>
-        </div>
-        <nav>
-            <ul></ul>
-        </nav>
+        <h1>QuizMaster.AI</h1>
     </header>
-    <div class="container">
-        <form method="POST" action="/">
-            <div class="content">
-                <textarea placeholder="Place your text here" name="student_text" rows="10" cols="50"></textarea>
-                <button class="btn" type="submit">Generate Flashcards</button>
-            </div>
+    <main>
+        <form id="flashcard-form">
+            <textarea id="text" name="text" placeholder="Enter text to generate flashcards"></textarea>
+            <br>
+            <button type="submit">Generate Flashcards</button>
         </form>
-        <!-- Display the response -->
-        {% if submitted_text %}
-        <div class="output">
-            <h2>Processed Text:</h2>
-            <p>{{ submitted_text }}</p>
-        </div>
-        {% endif %}
-    </div>
+        <div id="loading" style="display: none;">Loading...</div>
+        <div id="flashcards-container"></div>
+    </main>
+    <script>
+        // Handle form submission
+        document.querySelector("#flashcard-form").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const inputText = document.querySelector("#text").value;
+            const flashcardsContainer = document.querySelector("#flashcards-container");
+            const loadingIndicator = document.querySelector("#loading");
+
+            // Clear previous results and show loading
+            flashcardsContainer.innerHTML = "";
+            loadingIndicator.style.display = "block";
+
+            try {
+                // Send POST request to backend
+                const response = await fetch("/generate_flashcards", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ text: inputText }),
+                });
+
+                // Handle errors
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    flashcardsContainer.innerHTML = `<p style="color: red;">Error: ${errorData.error}</p>`;
+                    return;
+                }
+
+                // Parse response and display flashcards
+                const data = await response.json();
+                displayFlashcards(data.flashcards);
+            } catch (error) {
+                flashcardsContainer.innerHTML = `<p style="color: red;">Failed to connect to the server.</p>`;
+                console.error("Error:", error);
+            } finally {
+                // Hide loading indicator
+                loadingIndicator.style.display = "none";
+            }
+        });
+    </script>
 </body>
 </html>

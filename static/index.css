@@ -1,70 +1,90 @@
-* {
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
-}
-
 body {
-    background-color: white;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
 header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 30px 10%;
-    background-color: #5c5470;
-}
-
-.logo {
-    cursor: pointer;
-}
-
-.logo p {
-    font-weight: bold;
-    font-size: 24px;
+    text-align: center;
+    background: #653e6a;
     color: white;
-    text-decoration: none;
-    background-color: none;
-    font-family: sans-serif;
-    margin-bottom: 10px;
+    padding: 1rem;
 }
 
-.container {
+main {
+    padding: 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background-color: white;
 }
 
-.content {
-    background: white;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 80%;
-    max-width: 600px;
-}
-
-.textarea {
-    width: 100%;
-    padding: 100px;
-    background-color: #5c5470;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    margin-bottom: 10px;
+textarea {
+    width: 400px;
+    height: 150px;
+    max-width: 90vw;
+    margin-bottom: 1rem;
 }
 
 button {
-    width: 100%;
-    padding: 10px;
-    background-color: #5c5470;
+    padding: 0.5rem 1rem;
+    background: #653e6a;
     color: white;
     border: none;
     cursor: pointer;
+    border-radius: 4px;
 }
 
 button:hover {
-    background-color: #6a60a9;
+    background: #4d2950;
+}
+
+#flashcard-form {
+    text-align: center;
+}
+
+#flashcards-container {
+    margin-top: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.flashcard {
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+.card-inner {
+    position: relative;
+    width: min(250px, 90vw);
+    height: 120px;
+    transform-style: preserve-3d;
+    transition: transform 0.5s;
+}
+
+.flashcard.flipped .card-inner {
+    transform: rotateY(180deg);
+}
+
+.front, .back {
+    position: absolute;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    border: 1px solid #653e6a;
+    border-radius: 8px;
+}
+
+.front {
+    background: white;
+    color: black;
+}
+
+.back {
+    background: #653e6a;
+    color: white;
+    transform: rotateY(180deg);
 }
