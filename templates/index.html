@@ -89,15 +89,28 @@
 
         window.onresize = repairCardDimensions;
 
-        function setLogoDimensions(){
-            const text = document.getElementById("header_text");
-            const logo = document.getElementById("header_logo");
-            const height_css = text.getBoundingClientRect().height + "px";
-            logo.style.setProperty("height", height_css);
-            logo.style.removeProperty("display");
+        function initialStyleSetup(){
+            //Correct size of logo
+            let text = document.getElementById("header_text");
+            let icon = document.getElementById("header_logo");
+            let height_css = text.getBoundingClientRect().height + "px";
+            icon.style.setProperty("height", height_css);
+            icon.style.setProperty("width", "auto");
+            icon.style.removeProperty("display");
+
+            //Correct size of loading gif
+            text = document.getElementById("loading_text");
+            icon = document.getElementById("loading_icon");
+            height_css = text.getBoundingClientRect().height + "px";
+            icon.style.setProperty("height", height_css);
+            icon.style.setProperty("width", "auto");
+            icon.style.removeProperty("display");
+            //The text has a techinical height of 0 if it's not visible,
+            //so we must wait until this process is done to make it invisble.
+            document.getElementById("loading").style.setProperty("display", "none");
         }
 
-        window.onload = setLogoDimensions;
+        window.onload = initialStyleSetup;
     </script>
 </head>
 <body>
@@ -111,7 +124,10 @@
             <br>
             <button type="submit">Generate Flashcards</button>
         </form>
-        <div id="loading" style="display: none;">Loading...</div>
+        <div id="loading">
+            <img id="loading_icon" style="display: none;" src="{{ url_for('static', filename='Loading_icon.gif') }}">
+            <div id="loading_text">Loading...</div>
+        </div>
         <div id="flashcards-container"></div>
     </main>
     <script>
@@ -124,7 +140,7 @@
 
             // Clear previous results and show loading
             flashcardsContainer.innerHTML = "";
-            loadingIndicator.style.display = "block";
+            loadingIndicator.style.removeProperty("display");
 
             try {
                 // Send POST request to backend
@@ -151,7 +167,7 @@
                 console.error("Error:", error);
             } finally {
                 // Hide loading indicator
-                loadingIndicator.style.display = "none";
+                loadingIndicator.style.setProperty("display", "none");
             }
         });
     </script>
