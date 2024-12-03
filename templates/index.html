@@ -12,7 +12,7 @@
         card_backs = [];
 
         function displayFlashcards(flashcards) {
-            const flashcardsContainer = document.querySelector("#flashcards-container");
+            const flashcardsContainer = document.getElementById("flashcards-container");
             flashcardsContainer.innerHTML = ""; // Clear previous content
             card_inners = [];
             card_fronts = [];
@@ -116,11 +116,11 @@
     </main>
     <script>
         // Handle form submission
-        document.querySelector("#flashcard-form").addEventListener("submit", async (event) => {
+        document.getElementById("flashcard-form").addEventListener("submit", async (event) => {
             event.preventDefault();
-            const inputText = document.querySelector("#text").value;
-            const flashcardsContainer = document.querySelector("#flashcards-container");
-            const loadingIndicator = document.querySelector("#loading");
+            const inputText = document.getElementById("text").value;
+            const flashcardsContainer = document.getElementById("flashcards-container");
+            const loadingIndicator = document.getElementById("loading");
 
             // Clear previous results and show loading
             flashcardsContainer.innerHTML = "";
