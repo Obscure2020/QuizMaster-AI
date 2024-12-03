@@ -68,11 +68,21 @@
         }
 
         window.onresize = repairCardDimensions;
+
+        function setLogoDimensions(){
+            const text = document.getElementById("header_text");
+            const logo = document.getElementById("header_logo");
+            const height_css = text.getBoundingClientRect().height + "px";
+            logo.style.setProperty("height", height_css);
+        }
+
+        window.onload = setLogoDimensions;
     </script>
 </head>
 <body>
     <header>
-        <h1>QuizMaster.AI</h1>
+        <img id="header_logo" src="{{ url_for('static', filename='Brain.svg') }}">
+        <h1 id="header_text">QuizMaster.AI</h1>
     </header>
     <main>
         <form id="flashcard-form">
