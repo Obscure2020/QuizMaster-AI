@@ -52,18 +52,38 @@
             card_inners.forEach((inner, index) => {
                 const front = card_fronts[index];
                 const back = card_backs[index];
+
                 inner.style.removeProperty("height");
                 front.style.removeProperty("height");
                 back.style.removeProperty("height");
-                const front_outer_height = front.getBoundingClientRect().height;
-                const back_outer_height = back.getBoundingClientRect().height;
+                inner.style.removeProperty("width");
+                front.style.removeProperty("width");
+                back.style.removeProperty("width");
+
+                const front_bounding = front.getBoundingClientRect();
+                const front_computed = window.getComputedStyle(front);
+                const back_bounding = back.getBoundingClientRect();
+                const back_computed = window.getComputedStyle(back);
+
+                const front_outer_height = front_bounding.height;
+                const back_outer_height = back_bounding.height;
                 const outer_height_css = Math.max(front_outer_height, back_outer_height) + "px";
                 inner.style.setProperty("height", outer_height_css);
-                const front_inner_height = parseFloat(window.getComputedStyle(front).height);
-                const back_inner_height = parseFloat(window.getComputedStyle(back).height);
+                const front_inner_height = parseFloat(front_computed.height);
+                const back_inner_height = parseFloat(back_computed.height);
                 const inner_height_css = Math.max(front_inner_height, back_inner_height) + "px";
                 front.style.setProperty("height", inner_height_css);
                 back.style.setProperty("height", inner_height_css);
+
+                const front_outer_width = front_bounding.width;
+                const back_outer_width = back_bounding.width;
+                const outer_width_css = Math.max(front_outer_width, back_outer_width) + "px";
+                inner.style.setProperty("width", outer_width_css);
+                const front_inner_width = parseFloat(front_computed.width);
+                const back_inner_width = parseFloat(back_computed.width);
+                const inner_width_css = Math.max(front_inner_width, back_inner_width) + "px";
+                front.style.setProperty("width", inner_width_css);
+                back.style.setProperty("width", inner_width_css);
             });
         }
 
@@ -74,6 +94,7 @@
             const logo = document.getElementById("header_logo");
             const height_css = text.getBoundingClientRect().height + "px";
             logo.style.setProperty("height", height_css);
+            logo.style.removeProperty("display");
         }
 
         window.onload = setLogoDimensions;
@@ -81,7 +102,7 @@
 </head>
 <body>
     <header>
-        <img id="header_logo" src="{{ url_for('static', filename='Brain.svg') }}">
+        <img id="header_logo" style="display: none;" src="{{ url_for('static', filename='Brain.svg') }}">
         <h1 id="header_text">QuizMaster.AI</h1>
     </header>
     <main>
