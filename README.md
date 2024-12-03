@@ -1,4 +1,4 @@
-# QuizMaster-AI
+# QuizMaster AI
 
 This project was developed by:
 - Clinton Obukohwo
