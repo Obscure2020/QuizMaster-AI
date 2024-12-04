@@ -116,7 +116,7 @@
 <body>
     <header>
         <img id="header_logo" style="display: none;" src="{{ url_for('static', filename='Brain.svg') }}">
-        <h1 id="header_text">QuizMaster AI</h1>
+        <h1 id="header_text">QuizMaster&nbsp;AI</h1>
     </header>
     <main>
         <form id="flashcard-form">
@@ -130,6 +130,9 @@
         </div>
         <div id="flashcards-container"></div>
     </main>
+    <a title="Visit source code on GitHub" href="https://github.com/Obscure2020/QuizMaster-AI">
+        <img id="github_link" src="{{ url_for('static', filename='github-mark-white.svg') }}">
+    </a>
     <script>
         // Handle form submission
         document.getElementById("flashcard-form").addEventListener("submit", async (event) => {
