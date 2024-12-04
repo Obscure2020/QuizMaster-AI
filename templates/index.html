@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>QuizMasterAI</title>
+    <title>QuizMaster AI</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
     <script>
         card_inners = [];
         card_fronts = [];
         card_backs = [];
 
         function displayFlashcards(flashcards) {
-            const flashcardsContainer = document.querySelector("#flashcards-container");
+            const flashcardsContainer = document.getElementById("flashcards-container");
             flashcardsContainer.innerHTML = ""; // Clear previous content
             card_inners = [];
             card_fronts = [];
@@ -51,27 +52,71 @@
             card_inners.forEach((inner, index) => {
                 const front = card_fronts[index];
                 const back = card_backs[index];
+
                 inner.style.removeProperty("height");
                 front.style.removeProperty("height");
                 back.style.removeProperty("height");
-                const front_outer_height = front.getBoundingClientRect().height;
-                const back_outer_height = back.getBoundingClientRect().height;
+                inner.style.removeProperty("width");
+                front.style.removeProperty("width");
+                back.style.removeProperty("width");
+
+                const front_bounding = front.getBoundingClientRect();
+                const front_computed = window.getComputedStyle(front);
+                const back_bounding = back.getBoundingClientRect();
+                const back_computed = window.getComputedStyle(back);
+
+                const front_outer_height = front_bounding.height;
+                const back_outer_height = back_bounding.height;
                 const outer_height_css = Math.max(front_outer_height, back_outer_height) + "px";
                 inner.style.setProperty("height", outer_height_css);
-                const front_inner_height = parseFloat(window.getComputedStyle(front).height);
-                const back_inner_height = parseFloat(window.getComputedStyle(back).height);
+                const front_inner_height = parseFloat(front_computed.height);
+                const back_inner_height = parseFloat(back_computed.height);
                 const inner_height_css = Math.max(front_inner_height, back_inner_height) + "px";
                 front.style.setProperty("height", inner_height_css);
                 back.style.setProperty("height", inner_height_css);
+
+                const front_outer_width = front_bounding.width;
+                const back_outer_width = back_bounding.width;
+                const outer_width_css = Math.max(front_outer_width, back_outer_width) + "px";
+                inner.style.setProperty("width", outer_width_css);
+                const front_inner_width = parseFloat(front_computed.width);
+                const back_inner_width = parseFloat(back_computed.width);
+                const inner_width_css = Math.max(front_inner_width, back_inner_width) + "px";
+                front.style.setProperty("width", inner_width_css);
+                back.style.setProperty("width", inner_width_css);
             });
         }
 
         window.onresize = repairCardDimensions;
+
+        function initialStyleSetup(){
+            //Correct size of logo
+            let text = document.getElementById("header_text");
+            let icon = document.getElementById("header_logo");
+            let height_css = text.getBoundingClientRect().height + "px";
+            icon.style.setProperty("height", height_css);
+            icon.style.setProperty("width", "auto");
+            icon.style.removeProperty("display");
+
+            //Correct size of loading gif
+            text = document.getElementById("loading_text");
+            icon = document.getElementById("loading_icon");
+            height_css = text.getBoundingClientRect().height + "px";
+            icon.style.setProperty("height", height_css);
+            icon.style.setProperty("width", "auto");
+            icon.style.removeProperty("display");
+            //The text has a techinical height of 0 if it's not visible,
+            //so we must wait until this process is done to make it invisble.
+            document.getElementById("loading").style.setProperty("display", "none");
+        }
+
+        window.onload = initialStyleSetup;
     </script>
 </head>
 <body>
     <header>
-        <h1>QuizMaster.AI</h1>
+        <img id="header_logo" style="display: none;" src="{{ url_for('static', filename='Brain.svg') }}">
+        <h1 id="header_text">QuizMaster&nbsp;AI</h1>
     </header>
     <main>
         <form id="flashcard-form">
@@ -79,20 +124,26 @@
             <br>
             <button type="submit">Generate Flashcards</button>
         </form>
-        <div id="loading" style="display: none;">Loading...</div>
+        <div id="loading">
+            <img id="loading_icon" style="display: none;" src="{{ url_for('static', filename='Loading_icon.gif') }}">
+            <div id="loading_text">Loading...</div>
+        </div>
         <div id="flashcards-container"></div>
     </main>
+    <a title="Visit source code on GitHub" href="https://github.com/Obscure2020/QuizMaster-AI">
+        <img id="github_link" src="{{ url_for('static', filename='github-mark-white.svg') }}">
+    </a>
     <script>
         // Handle form submission
-        document.querySelector("#flashcard-form").addEventListener("submit", async (event) => {
+        document.getElementById("flashcard-form").addEventListener("submit", async (event) => {
             event.preventDefault();
-            const inputText = document.querySelector("#text").value;
-            const flashcardsContainer = document.querySelector("#flashcards-container");
-            const loadingIndicator = document.querySelector("#loading");
+            const inputText = document.getElementById("text").value;
+            const flashcardsContainer = document.getElementById("flashcards-container");
+            const loadingIndicator = document.getElementById("loading");
 
             // Clear previous results and show loading
             flashcardsContainer.innerHTML = "";
-            loadingIndicator.style.display = "block";
+            loadingIndicator.style.removeProperty("display");
 
             try {
                 // Send POST request to backend
@@ -119,7 +170,7 @@
                 console.error("Error:", error);
             } finally {
                 // Hide loading indicator
-                loadingIndicator.style.display = "none";
+                loadingIndicator.style.setProperty("display", "none");
             }
         });
     </script>
